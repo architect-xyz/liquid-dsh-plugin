@@ -1,0 +1,30 @@
+# Layer applied when a profile lists this bundle.
+#
+# 1. `llm-pi-ai` is mounted dormant by @deepseek-ai/dsh-base; supplying a
+#    `liquid` provider profile registers the route. Liquid speaks OpenAI Chat
+#    Completions at /v1, so no custom adapter is needed. The key resolves per
+#    request from LIQUID_API_KEY; `x-liquid-cap-usd` locks the most any one
+#    request can cost, before the first token.
+#    A patch replaces the row's whole `config`, so another bundle's pi-ai
+#    providers must be restated in the profile's own cordis.patch.yml.
+# 2. `liquid-tools` mounts the read-only market tools.
+- id: llm-pi-ai
+  config:
+    providers:
+      liquid:
+        displayName: Liquid Inference
+        api: openai-completions
+        baseURL: https://router.inference.ai.exchange/v1
+        apiKeyEnv: LIQUID_API_KEY
+        headers:
+          x-liquid-cap-usd: '1'
+        models:
+          - id: liquid.auto
+            name: Liquid Auto
+            contextWindow: 10000000
+            maxTokens: 1048576
+            input: [text, image]
+
+- insert:
+    - id: liquid-tools
+      name: dsh-liquid-inference
