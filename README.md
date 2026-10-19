@@ -4,9 +4,33 @@
 
 ## Install
 
+Not published to npm yet. Install from GitHub or from a packed tarball, then export a buyer key with the `spend` scope and restart the profile:
+
 ```sh
-export LIQUID_API_KEY=sk-liquid-...   # buyer key with the `spend` scope
-dsh plugin --profile web add dsh-liquid-inference
+export LIQUID_API_KEY=sk-liquid-...
+```
+
+**From GitHub.** The package builds itself on install, which pnpm blocks until you allow it:
+
+```sh
+dsh plugin --profile web add github:architect-xyz/liquid-dsh-plugin
+```
+
+The first run fails with `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`. Add the package under `allowBuilds` in `$DSH_HOME/profiles/web/pnpm-workspace.yaml` and run the command again:
+
+```yaml
+allowBuilds:
+  dsh-liquid-inference: true
+```
+
+That allowance lets the package run its build script on your machine at install time, outside any sandbox. Pin a commit (`github:architect-xyz/liquid-dsh-plugin#<sha>`) so a later push cannot change what runs.
+
+**From a tarball.** Needs no build permission:
+
+```sh
+git clone https://github.com/architect-xyz/liquid-dsh-plugin.git
+cd liquid-dsh-plugin && pnpm install && pnpm pack
+dsh plugin --profile web add ./dsh-liquid-inference-0.1.0.tgz
 ```
 
 Pick **Liquid Auto** (`liquid.auto`) in the model picker.
