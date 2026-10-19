@@ -2,6 +2,14 @@
   "name": "dsh-liquid-inference",
   "version": "0.1.0",
   "description": "Liquid Inference for DeepSeek Harness: a `liquid` model route plus read-only market tools",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/architect-xyz/liquid-dsh-plugin.git"
+  },
+  "homepage": "https://github.com/architect-xyz/liquid-dsh-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/architect-xyz/liquid-dsh-plugin/issues"
+  },
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
