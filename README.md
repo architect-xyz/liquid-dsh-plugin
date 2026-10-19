@@ -11,8 +11,6 @@ dsh plugin --profile web add dsh-liquid-inference
 
 Pick **Liquid Auto** (`liquid.auto`) in the model picker.
 
-> Unofficial: an independent bundle built on DeepSeek Harness, not affiliated with or endorsed by DeepSeek or Architect.
-
 ## What it adds
 
 **Model route `liquid`** — no adapter code. The bundle patch configures the stock `llm-pi-ai` adapter with `api: openai-completions`, `baseURL: https://router.inference.ai.exchange/v1` and `apiKeyEnv: LIQUID_API_KEY`.
