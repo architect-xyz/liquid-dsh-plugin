@@ -14,6 +14,7 @@
   },
   "files": [
     "lib",
+    "src",
     "cordis.patch.yml"
   ],
   "keywords": [
@@ -23,7 +24,7 @@
   ],
   "license": "MIT",
   "engines": {
-    "dsh": ">=0.2.0 <0.3.0"
+    "dsh": ">=0.2.1-rc.2 <0.3.0"
   },
   "dsh": {
     "bundle": {
@@ -34,12 +35,15 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "prepare": "pnpm run build"
+    "prepare": "pnpm run build",
+    "prepack": "pnpm run build",
+    "test:install": "node scripts/install-test.mjs",
+    "check": "pnpm run typecheck && pnpm test && pnpm run build && pnpm run test:install"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": ">=4.0.5",
-    "@deepseek-ai/dsh-credentials": ">=0.2.1-rc.2",
-    "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2"
+    "@deepseek-ai/cordis": ">=4.0.5 <5",
+    "@deepseek-ai/dsh-credentials": ">=0.2.1-rc.2 <0.3.0",
+    "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0"
   },
   "dependencies": {
     "@deepseek-ai/schemastery": ">=3.18.5"
@@ -51,5 +55,6 @@
     "@types/node": "^22.0.0",
     "typescript": "^5.6.0",
     "vitest": "^3.0.0"
-  }
+  },
+  "packageManager": "pnpm@11.1.3"
 }
