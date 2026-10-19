@@ -11,9 +11,15 @@ dsh plugin --profile web add dsh-liquid-inference
 
 Pick **Liquid Auto** (`liquid.auto`) in the model picker.
 
+> Unofficial: an independent bundle built on DeepSeek Harness, not affiliated with or endorsed by DeepSeek or Architect.
+
 ## What it adds
 
-**Model route `liquid`** — no adapter code. The bundle patch configures the stock `llm-pi-ai` adapter with `api: openai-completions`, `baseURL: https://router.inference.ai.exchange/v1`, `apiKeyEnv: LIQUID_API_KEY` and `x-liquid-cap-usd: '1'`, so no request can cost more than 1 USD. Edit the cap in your profile's `cordis.patch.yml`.
+**Model route `liquid`** — no adapter code. The bundle patch configures the stock `llm-pi-ai` adapter with `api: openai-completions`, `baseURL: https://router.inference.ai.exchange/v1` and `apiKeyEnv: LIQUID_API_KEY`.
+
+- **Cap.** Each request carries `x-liquid-cap-usd`, the most it can cost, locked before the first token. The default is 1 USD; set `LIQUID_CAP_USD` in the launching environment to change it.
+- **Models.** `liquid.auto` plus its ranking variants `:cheapest`, `:economy`, `:balanced` and `:premium` (documented in the description of `GET /v1/exchange/routers`), and `deepseek-v4-flash` as a pinned model. Add any id from `GET /v1/models` with a `models` entry in your profile's `cordis.patch.yml`.
+- **Reasoning.** Levels `low`, `medium` and `high` are sent as `reasoning_effort`. The exchange passes the level through unchecked, so a level the winning provider rejects fails that request.
 
 **Tools** (plugin `liquid-inference`)
 
@@ -28,9 +34,9 @@ Chat, image, speech and video purchases are deliberately not tools: the harness'
 
 ## Data flow
 
-Full prompts and tool results go to `router.inference.ai.exchange`, which forwards them to whichever third-party provider wins the auction. The key is read per request from the credential store and never written to config.
+Full prompts and tool results go to `router.inference.ai.exchange`, which forwards them to whichever third-party provider wins the auction. The key is read per request, from the credential store when the profile mounts one and from `LIQUID_API_KEY` otherwise (headless profiles disable the store). It is never written to config.
 
 ## Notes
 
 - The patch replaces the `llm-pi-ai` row's whole `config`. If another bundle also configures pi-ai providers, restate them in your profile's `cordis.patch.yml`.
-- Develop: `pnpm install && pnpm test && pnpm run typecheck`. Try it with `DSH_HOME=$(mktemp -d) dsh plugin --profile dev add $PWD`.
+- Develop: `pnpm install && pnpm run check`. `pnpm run test:install` packs the bundle, installs the tarball into an isolated profile of a real dsh (`DSH_VERSION` picks the release, default `next`) and boots it; it needs network access.

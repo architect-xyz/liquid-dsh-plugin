@@ -4,10 +4,15 @@
 #    `liquid` provider profile registers the route. Liquid speaks OpenAI Chat
 #    Completions at /v1, so no custom adapter is needed. The key resolves per
 #    request from LIQUID_API_KEY; `x-liquid-cap-usd` locks the most any one
-#    request can cost, before the first token.
+#    request can cost, before the first token. Set LIQUID_CAP_USD to change it.
 #    A patch replaces the row's whole `config`, so another bundle's pi-ai
 #    providers must be restated in the profile's own cordis.patch.yml.
 # 2. `liquid-tools` mounts the read-only market tools.
+#
+# Router ranking suffixes (:premium, :balanced, :economy, :cheapest) are
+# documented in the description of GET /v1/exchange/routers. Reasoning levels
+# are sent as `reasoning_effort`; the exchange passes the level through
+# unchecked, so a level the winning provider rejects fails that request.
 - id: llm-pi-ai
   config:
     providers:
@@ -17,13 +22,43 @@
         baseURL: https://router.inference.ai.exchange/v1
         apiKeyEnv: LIQUID_API_KEY
         headers:
-          x-liquid-cap-usd: '1'
+          x-liquid-cap-usd: !!js process.env.LIQUID_CAP_USD ?? '1'
         models:
           - id: liquid.auto
             name: Liquid Auto
             contextWindow: 10000000
             maxTokens: 1048576
             input: [text, image]
+            reasoningEfforts: { off: , low: low, medium: medium, high: high }
+          - id: liquid.auto:cheapest
+            name: Liquid Auto (cheapest)
+            contextWindow: 10000000
+            maxTokens: 1048576
+            input: [text, image]
+            reasoningEfforts: { off: , low: low, medium: medium, high: high }
+          - id: liquid.auto:economy
+            name: Liquid Auto (economy)
+            contextWindow: 10000000
+            maxTokens: 1048576
+            input: [text, image]
+            reasoningEfforts: { off: , low: low, medium: medium, high: high }
+          - id: liquid.auto:balanced
+            name: Liquid Auto (balanced)
+            contextWindow: 10000000
+            maxTokens: 1048576
+            input: [text, image]
+            reasoningEfforts: { off: , low: low, medium: medium, high: high }
+          - id: liquid.auto:premium
+            name: Liquid Auto (premium)
+            contextWindow: 10000000
+            maxTokens: 1048576
+            input: [text, image]
+            reasoningEfforts: { off: , low: low, medium: medium, high: high }
+          - id: deepseek-v4-flash
+            name: DeepSeek V4 Flash (via Liquid)
+            contextWindow: 1048576
+            maxTokens: 65536
+            reasoningEfforts: { off: , low: low, medium: medium, high: high }
 
 - insert:
     - id: liquid-tools
