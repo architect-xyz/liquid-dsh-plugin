@@ -19,6 +19,8 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm test
       - run: pnpm run build
+      # lib/ is committed so git installs need no build; fail if it is stale.
+      - run: git diff --exit-code -- lib
       # Packs the bundle, installs the tarball into an isolated profile of a real
       # dsh, and boots it: catches leftover .ts imports in lib/, a refused
       # manifest, and entries that never activate.

@@ -10,20 +10,13 @@ Not published to npm yet. Install from GitHub or from a packed tarball, then exp
 export LIQUID_API_KEY=sk-liquid-...
 ```
 
-**From GitHub.** The package builds itself on install, which pnpm blocks until you allow it:
+**From GitHub.** The built `lib/` is committed, so no build step or `allowBuilds` entry is needed:
 
 ```sh
 dsh plugin --profile web add github:architect-xyz/liquid-dsh-plugin
 ```
 
-The first run fails with `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`. Add the package under `allowBuilds` in `$DSH_HOME/profiles/web/pnpm-workspace.yaml` and run the command again:
-
-```yaml
-allowBuilds:
-  dsh-liquid-inference: true
-```
-
-That allowance lets the package run its build script on your machine at install time, outside any sandbox. Pin a commit (`github:architect-xyz/liquid-dsh-plugin#<sha>`) so a later push cannot change what runs.
+Pin a commit (`github:architect-xyz/liquid-dsh-plugin#<sha>`) so a later push cannot change what you install.
 
 **From a tarball.** Needs no build permission:
 
@@ -61,4 +54,4 @@ Full prompts and tool results go to `router.inference.ai.exchange`, which forwar
 ## Notes
 
 - The patch replaces the `llm-pi-ai` row's whole `config`. If another bundle also configures pi-ai providers, restate them in your profile's `cordis.patch.yml`.
-- Develop: `pnpm install && pnpm run check`. `pnpm run test:install` packs the bundle, installs the tarball into an isolated profile of a real dsh (`DSH_VERSION` picks the release, default `next`) and boots it; it needs network access.
+- Develop: `pnpm install && pnpm run check`. Commit the rebuilt `lib/` with source changes (CI fails on a stale one). `pnpm run test:install` packs the bundle, installs the tarball into an isolated profile of a real dsh (`DSH_VERSION` picks the release, default `next`) and boots it; it needs network access.
